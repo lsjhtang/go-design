@@ -8,6 +8,7 @@ import (
 
 type User struct {
 	*goft.GormAdapter
+	Age *goft.Value `prefix:"user.age"`
 }
 
 func NewUser() *User {
@@ -18,7 +19,7 @@ func(this *User) GetUser(context *gin.Context) string {
 	/*return func(context *gin.Context) {
 		context.JSON(200, gin.H{"data": map[string]string{"msg":"获取用户信息成功"}})
 	}*/
-	return "123"
+	return this.Age.String()
 }
 
 func(this *User) UserDetail(context *gin.Context) goft.Model {

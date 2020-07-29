@@ -77,6 +77,9 @@ func(this *Goft) setProp(class IClass)  {
 			if p := this.getProp(f.Type()); p != nil {//类型一致则做处理
 				f.Set(reflect.New(f.Type().Elem()))
 				f.Elem().Set(reflect.ValueOf(p).Elem())
+				if IsAnnotation(f.Type()) {//tag注解
+					p.(Annotation).SetTag(reflect.TypeOf(class).Elem().Field(i).Tag)
+				}
 			}
 		}
 

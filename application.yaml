@@ -10,3 +10,5 @@ drive:
   password: root
 
 config:
+  user:
+    age: 18
