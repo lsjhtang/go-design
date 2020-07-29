@@ -11,13 +11,25 @@ type ServerConfig struct {
 	Name string
 }
 
+type Drive struct {
+	Connection string
+	Port int
+	Host string
+	Database string
+	UserName string
+	Password string
+}
+
 //系统配置
 type SysConfig struct {
 	Server *ServerConfig
+	Drive *Drive
 }
 
 func NewSysConfig() *SysConfig {
-	return &SysConfig{Server: &ServerConfig{Port:8081, Name:"web"}}
+	return &SysConfig{Server: &ServerConfig{Port:8081, Name:"web"},
+					 Drive: &Drive{Connection: "mysql", Port: 3306, Host: "127.0.0.1", Database: "test", UserName: "root", Password: "root"},
+		}
 }
 
 func InitConfig() *SysConfig {

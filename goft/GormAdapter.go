@@ -1,6 +1,7 @@
 package goft
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
@@ -10,7 +11,9 @@ type GormAdapter struct {
 }
 
 func NewGormAdapter() *GormAdapter {
-	db, err := gorm.Open("mysql", "root:root@(172.20.10.13:3306)/test?charset=utf8mb4&parseTime=True&loc=Local")
+	config := InitConfig().Drive
+	db, err := gorm.Open(fmt.Sprintf("%s",config.Connection),
+		fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",config.UserName, config.Password, config.Host, config.Port, config.Database))
 	if err != nil {
 		panic(err)
 	}

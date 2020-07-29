@@ -32,7 +32,9 @@ func(this *User) UserList(context *gin.Context) goft.Model {
 	//users := []*models.UserModel{{ID: 202, UserName: "李四"},{ID: 303, UserName: "王五"}}
 	//return goft.MakeModels(users)
 	userModel := models.NewUserModel()
-	this.Table("users").Find(userModel,"id=?",1)
+	err := context.BindUri(userModel)
+	goft.Error(err)
+	this.Table("users").Find(userModel)
 	return userModel
 
 }
@@ -41,5 +43,5 @@ func(this *User) UserList(context *gin.Context) goft.Model {
 func(this *User) Build(goft *goft.Goft)  {
 	goft.Handle("GET", "/user", this.GetUser)
 	goft.Handle("GET", "/user_detail/:id", this.UserDetail)
-	goft.Handle("GET", "/user_list", this.UserList)
+	goft.Handle("GET", "/user_list/:id", this.UserList)
 }
