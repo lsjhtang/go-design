@@ -53,6 +53,6 @@ func main() {
 	/*arr := []int{7,1,5,3,6,4}
 	fmt.Println(maxProfit(arr))*/
 
-	Ignite().DB(NewGormAdapter()).Attach(NewUserMiddle()).Mount("v1", NewUser()).Mount("v2", NewIndex()).Launch()
+	Ignite().Beans(NewGormAdapter()).Attach(NewUserMiddle()).Mount("v1", NewUser()).Mount("v2", NewIndex()).Launch()
 }
 

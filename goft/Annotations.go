@@ -1,10 +1,17 @@
 package goft
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 )
 
 var Annotations []Annotation
+
+func init()  {
+	Annotations = make([]Annotation, 0)
+	Annotations = append(Annotations, new(Value))
+}
 
 type Annotation interface {
 	SetTag(tag reflect.StructTag)
@@ -20,13 +27,10 @@ func IsAnnotation(t reflect.Type) bool {
 	return false
 }
 
-func init()  {
-	Annotations = make([]Annotation, 0)
-	Annotations = append(Annotations, new(Value))
-}
 
 type Value struct {
 	tag reflect.StructTag
+	BeanFactory *BeanFactory
 }
 
 func(this *Value) SetTag(tag reflect.StructTag)  {
@@ -34,5 +38,19 @@ func(this *Value) SetTag(tag reflect.StructTag)  {
 }
 
 func(this *Value) String() string {
-	return "18"
+	get_prefix:=this.tag.Get("prefix")
+	if get_prefix==""{
+		return ""
+	}
+	prefix:=strings.Split(get_prefix,".")
+	if config:=this.BeanFactory.GetBean(new(SysConfig));config!=nil{
+		get_value:=GetConfigValue(config.(*SysConfig).Config,prefix,0)
+		if get_value!=nil{
+			return fmt.Sprintf("%v",get_value)
+		}else{
+			return ""
+		}
+	}else{
+		return ""
+	}
 }

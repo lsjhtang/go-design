@@ -3,28 +3,32 @@ package goft
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"reflect"
 )
 
 type Goft struct {
 	*gin.Engine
 	g *gin.RouterGroup
-	props []interface{}
+	beanFactory *BeanFactory
 }
 
 func Ignite() *Goft {
-	g:= &Goft{Engine:gin.New(), props:make([]interface{},0)}
+	g:= &Goft{Engine:gin.New(), beanFactory: NewBeanFactory()}
 	g.Use(ErrorHandler())
+	g.beanFactory.setBean(InitConfig())  //整个配置加载进bean中
 	return g
 }
 
 func (this *Goft) Launch()  {
-	config := InitConfig()
-	this.Run(fmt.Sprintf(":%d",config.Server.Port))
+	var port int=8080
+	if config:=this.beanFactory.GetBean(new(SysConfig));config!=nil {
+		port = config.(*SysConfig).Server.Port
+	}
+	this.Run(fmt.Sprintf(":%d",port))
 }
 
-func (this *Goft) DB(db interface{}) *Goft {
-	this.props = append(this.props, db)
+//设置数据库连接
+func (this *Goft) Beans(beans ...interface{}) *Goft {
+	this.beanFactory.setBean(beans)
 	return this
 }
 
@@ -53,35 +57,8 @@ func (this *Goft) Mount(gorup string, classes ...IClass) *Goft {
 	this.g = this.Group(gorup)
 	for _,class := range classes{
 		class.Build(this)
-		this.setProp(class)
+		this.beanFactory.inject(class)
 	}
 	return this
 }
 
-func(this *Goft) getProp(f reflect.Type) interface{}  {
-	for _,p:=range this.props{
-		if reflect.TypeOf(p) == f {
-			return p
-		}
-	}
-	return nil
-}
-
-func(this *Goft) setProp(class IClass)  {
-	vClass := reflect.ValueOf(class).Elem()
-	for i:=0;i<vClass.NumField();i++ {
-		f := vClass.Field(i)
-		if !f.IsNil() || f.Kind() != reflect.Ptr {//nil则无需重新初始化, 以及是否为指针类型
-			continue
-		}else {
-			if p := this.getProp(f.Type()); p != nil {//类型一致则做处理
-				f.Set(reflect.New(f.Type().Elem()))
-				f.Elem().Set(reflect.ValueOf(p).Elem())
-				if IsAnnotation(f.Type()) {//tag注解
-					p.(Annotation).SetTag(reflect.TypeOf(class).Elem().Field(i).Tag)
-				}
-			}
-		}
-
-	}
-}
