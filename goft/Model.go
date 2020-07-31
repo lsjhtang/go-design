@@ -8,13 +8,11 @@ import (
 type Model interface {
 	String() string
 }
-
 type Models string
-
-func MakeModels(v interface{}) Models {
-	value, err := json.Marshal(v)
-	if err != nil {
-		log.Print(err)
-	}
-	return Models(value)
+func MakeModels(v interface{}) Models{
+	  b,err:=json.Marshal(v)
+	  if err!=nil{
+	  	log.Println(err)
+	  }
+	  return Models(b)
 }
