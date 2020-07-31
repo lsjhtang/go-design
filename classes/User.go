@@ -2,6 +2,7 @@ package classes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"wserver/goft"
 	"wserver/models"
 )
@@ -24,9 +25,12 @@ func(this *User) GetUser(context *gin.Context) string {
 
 func(this *User) UserDetail(context *gin.Context) goft.Model {
 	ctx := models.NewUserModel()
-	err := context.BindUri(ctx)
-	goft.Error(err)
+	goft.Error(context.BindUri(ctx))
 	return ctx
+}
+
+func(this *User) UpdateViews(params ...interface{}){
+	this.Table("users").Where("id=?",params[0]).Update("views",gorm.Expr("views+1"))
 }
 
 func(this *User) UserList(context *gin.Context) goft.Model {
@@ -36,6 +40,7 @@ func(this *User) UserList(context *gin.Context) goft.Model {
 	err := context.BindUri(userModel)
 	goft.Error(err)
 	this.Table("users").Find(userModel)
+	goft.Task(this.UpdateViews, userModel.ID)//任务入队
 	return userModel
 
 }

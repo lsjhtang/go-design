@@ -52,8 +52,8 @@ func(this *BeanFactory) Inject(object interface{}){
 
 //把bean注入到控制器中 (内部方法,用户控制器注入。并同时处理注解)
 func(this *BeanFactory) inject(class IClass){
-	vClass:=reflect.ValueOf(class).Elem()
 	vClassT:=reflect.TypeOf(class).Elem()
+	vClass:=reflect.ValueOf(class).Elem()
 	for i:=0;i<vClass.NumField();i++{
 		f:=vClass.Field(i)
 		if f.Kind()!=reflect.Ptr || !f.IsNil()  {
