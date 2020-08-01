@@ -17,7 +17,7 @@ func NewUser() *User {
 	return &User{}
 }
 
-func (this *User) GetUser() string {
+func (this *User) GetUser(context *gin.Context) string {
 	/*return func(context *gin.Context) {
 		context.JSON(200, gin.H{"data": map[string]string{"msg":"获取用户信息成功"}})
 	}*/

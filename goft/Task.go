@@ -1,11 +1,18 @@
 package goft
 
-import "sync"
+import (
+	"github.com/robfig/cron/v3"
+	"sync"
+)
 
 type TaskFunc func(params ...interface{})
 
-var taskList chan *TaskExecutor
-var One sync.Once //单例模式
+var (
+	taskList chan *TaskExecutor
+	one      sync.Once  //队列任务单例模式
+	oneCron  sync.Once  //定时任务单例模式
+	taskCron *cron.Cron //定时任务
+)
 
 func init() { //初始化的时候执行队列任务
 	chanList := getTaskList()
@@ -26,8 +33,15 @@ func DoTask(f *TaskExecutor) {
 	}()
 }
 
+func getCronTask() *cron.Cron {
+	oneCron.Do(func() {
+		taskCron = cron.New(cron.WithSeconds())
+	})
+	return taskCron
+}
+
 func getTaskList() chan *TaskExecutor {
-	One.Do(func() {
+	one.Do(func() {
 		taskList = make(chan *TaskExecutor)
 	})
 	return taskList
