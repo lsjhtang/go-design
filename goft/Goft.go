@@ -23,7 +23,7 @@ func (this *Goft) Launch() { //最终启动函数， 不用run，没有逼格
 	if config := this.beanFactory.GetBean(new(SysConfig)); config != nil {
 		port = config.(*SysConfig).Server.Port
 	}
-	getCronTask().Run()
+	getCronTask().Start()
 	this.Run(fmt.Sprintf(":%d", port))
 }
 func (this *Goft) Handle(httpMethod, relativePath string, handler interface{}) *Goft {
