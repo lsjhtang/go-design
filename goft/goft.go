@@ -3,6 +3,7 @@ package goft
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"wserver/lib"
 )
 
 type Goft struct {
@@ -24,6 +25,7 @@ func (this *Goft) Launch() { //最终启动函数， 不用run，没有逼格
 		port = config.(*SysConfig).Server.Port
 	}
 	getCronTask().Start()
+	lib.UserInit()
 	this.Run(fmt.Sprintf(":%d", port))
 }
 func (this *Goft) Handle(httpMethod, relativePath string, handler interface{}) *Goft {

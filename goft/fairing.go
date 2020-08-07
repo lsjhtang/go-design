@@ -7,5 +7,5 @@ import "github.com/gin-gonic/gin"
 // Fairing==整流罩。 用户保护卫星的
 //用这个名字，听起来很有腔调， 我很喜欢
 type Fairing interface {
-   OnRequest(*gin.Context) error  //这个有啥用？  等下我们可以看到
+	OnRequest(*gin.Context) error //这个有啥用？  等下我们可以看到
 }

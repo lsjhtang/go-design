@@ -1,10 +1,12 @@
 package classes
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"log"
 	"wserver/goft"
+	"wserver/lib"
 	"wserver/models"
 )
 
@@ -52,8 +54,24 @@ func (this *User) after(p ...interface{}) {
 	log.Print("after callback", p[0].(int))
 }
 
+func (this *User) AddUser(context *gin.Context) goft.Model {
+	userModel := models.NewUserModel()
+	err := context.BindJSON(userModel)
+	goft.Error(err)
+	//this.Table("users").Create(userModel)
+	this.Table("users").Find(userModel)
+
+	model, err := json.Marshal(userModel)
+	goft.Error(err)
+	err = lib.NewMQ().SendMessage(lib.EXCHANGE_USER, lib.ROUTER_KEY_PARTNER, string(model)) //入队
+	goft.Error(err)
+
+	return userModel
+}
+
 func (this *User) Build(goft *goft.Goft) {
 	goft.Handle("GET", "/user", this.GetUser)
+	goft.Handle("POST", "/add_user", this.AddUser)
 	goft.Handle("GET", "/user_detail/:id", this.UserDetail)
 	goft.Handle("GET", "/user_list/:id", this.UserList)
 }
