@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"wserver/mqInit"
+	"wserver/initalize"
 )
 
 func main() {
-	conn := mqInit.GetMq()
+	conn := initalize.GetMq()
 	defer conn.Close()
 
 	cha, err := conn.Channel()

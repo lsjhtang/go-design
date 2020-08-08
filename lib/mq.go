@@ -3,7 +3,7 @@ package lib
 import (
 	"github.com/streadway/amqp"
 	"log"
-	"wserver/mqInit"
+	"wserver/initalize"
 )
 
 const (
@@ -18,7 +18,7 @@ type MQ struct {
 }
 
 func NewMQ() *MQ {
-	c, err := mqInit.GetMq().Channel()
+	c, err := initalize.GetMq().Channel()
 	if err != nil {
 		log.Panic(err)
 	}

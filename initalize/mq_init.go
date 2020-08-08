@@ -1,4 +1,4 @@
-package mqInit
+package initalize
 
 import (
 	"github.com/streadway/amqp"
