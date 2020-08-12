@@ -12,12 +12,12 @@ func main() {
 
 	cha, err := conn.Channel()
 	if err != nil {
-		log.Fatalf("error:%s", err)
+		log.Fatalf("error:%s", err.Error())
 	}
 	defer cha.Close()
 	msgs, err := cha.Consume("users", "abc", false, false, false, false, nil)
 	if err != nil {
-		log.Fatalf("error:%s", err)
+		log.Fatalf("error:%s", err.Error())
 	}
 
 	for msg := range msgs {

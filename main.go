@@ -59,6 +59,7 @@ func main() {
 		Attach(NewUserMiddle()).                   //带生命周期的中间件
 		Mount("v1", NewUser()).
 		Mount("v2", NewIndex()).
+		Mount("v3", NewBook()).
 		/*Task("0/5 * * * * *", func() {
 			log.Println("定时任务启动")
 		}).*/

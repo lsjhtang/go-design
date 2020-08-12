@@ -8,7 +8,8 @@ import (
 var MqConn *amqp.Connection
 
 func init() {
-	conn, err := amqp.Dial("amqp://admin:123@192.168.10.240:5672/")
+	//conn, err := amqp.Dial("amqp://admin:123@192.168.10.240:5672/")
+	conn, err := amqp.Dial("amqp://admin:123@192.168.87.128:5672/")
 	if err != nil {
 		log.Fatalf("%s: %s", err, "Failed to connect to RabbitMQ")
 	}
