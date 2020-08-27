@@ -16,7 +16,7 @@ func UserInit() error {
 	}
 
 	qs := []string{QUEUE_USER, QUEUE_USER_PARTNER}
-	err = mq.DceQueueAanBind(qs, ROUTER_KEY_PARTNER, EXCHANGE_USER)
+	err = mq.DceQueueAadBind(qs, ROUTER_KEY_PARTNER, EXCHANGE_USER)
 	if err != nil {
 		return fmt.Errorf("queue bind error", err)
 	}

@@ -2,25 +2,21 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"wserver/initalize"
+	"github.com/streadway/amqp"
+	"time"
+	"wserver/lib"
 )
 
-func main() {
-	conn := initalize.GetMq()
-	defer conn.Close()
-
-	cha, err := conn.Channel()
-	if err != nil {
-		log.Fatalf("error:%s", err.Error())
-	}
-	defer cha.Close()
-	msgs, err := cha.Consume("users", "abc", false, false, false, false, nil)
-	if err != nil {
-		log.Fatalf("error:%s", err.Error())
-	}
-
+func SendMail(msgs <-chan amqp.Delivery) {
 	for msg := range msgs {
 		fmt.Println(msg.DeliveryTag, string(msg.Body))
+		time.Sleep(time.Second * 1)
+		msg.Ack(false)
 	}
+
+}
+
+func main() {
+	mq := lib.NewMQ()
+	mq.Consume(lib.QUEUE_USER, "c1", SendMail)
 }

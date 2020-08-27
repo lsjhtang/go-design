@@ -25,7 +25,7 @@ func NewMQ() *MQ {
 	return &MQ{Channel: c}
 }
 
-func (this *MQ) DceQueueAanBind(queues []string, key string, exchange string) error {
+func (this *MQ) DceQueueAadBind(queues []string, key string, exchange string) error {
 	for _, queue := range queues {
 		q, err := this.Channel.QueueDeclare(queue, false, false, false, false, nil)
 		if err != nil {
@@ -47,4 +47,13 @@ func (this *MQ) SendMessage(exchange string, key string, message string) error {
 			Body:        []byte(message),
 		})
 	return err
+}
+
+func (this *MQ) Consume(queue string, key string, callback func(<-chan amqp.Delivery)) {
+	msgs, err := this.Channel.Consume(queue, key, false, false, false, false, nil)
+	if err != nil {
+		log.Fatalf("error:%s", err.Error())
+	}
+
+	callback(msgs)
 }
