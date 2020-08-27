@@ -14,7 +14,8 @@ const (
 )
 
 type MQ struct {
-	Channel *amqp.Channel
+	Channel       *amqp.Channel
+	notifyConfirm chan amqp.Confirmation //确认模式
 }
 
 func NewMQ() *MQ {
@@ -56,4 +57,23 @@ func (this *MQ) Consume(queue string, key string, callback func(<-chan amqp.Deli
 	}
 
 	callback(msgs)
+}
+
+func (this *MQ) SetConfirm() { //消息确认模式
+	err := this.Channel.Confirm(false)
+	if err != nil {
+		log.Print(err)
+	}
+
+	this.notifyConfirm = this.Channel.NotifyPublish(make(chan amqp.Confirmation))
+}
+
+func (this *MQ) ListenConfirm() {
+	defer this.Channel.Close()
+	result := <-this.notifyConfirm
+	if result.Ack {
+		log.Println("消息确认成功")
+	} else {
+		log.Println("消息确认失败")
+	}
 }
