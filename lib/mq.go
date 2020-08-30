@@ -16,6 +16,7 @@ const (
 type MQ struct {
 	Channel       *amqp.Channel
 	notifyConfirm chan amqp.Confirmation //确认模式
+	notifyReturn  chan amqp.Return       //消息回执模式
 }
 
 func NewMQ() *MQ {
@@ -42,7 +43,7 @@ func (this *MQ) DceQueueAadBind(queues []string, key string, exchange string) er
 }
 
 func (this *MQ) SendMessage(exchange string, key string, message string) error {
-	err := this.Channel.Publish(exchange, key, false, false,
+	err := this.Channel.Publish(exchange, key, true, false,
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(message),
@@ -72,8 +73,23 @@ func (this *MQ) ListenConfirm() {
 	defer this.Channel.Close()
 	result := <-this.notifyConfirm
 	if result.Ack {
-		log.Println("消息确认成功")
+		log.Println("交换机确认成功")
 	} else {
-		log.Println("消息确认失败")
+		log.Println("交换机确认失败")
+	}
+}
+
+func (this *MQ) NotifyReturn() { //消息回执模式
+
+	this.notifyReturn = this.Channel.NotifyReturn(make(chan amqp.Return))
+	go this.listenReturn()
+}
+
+func (this *MQ) listenReturn() {
+	result := <-this.notifyReturn
+	if len(result.Body) == 0 {
+		log.Println("消息入队成功")
+	} else {
+		log.Println("消息入队失败", string(result.Body))
 	}
 }
