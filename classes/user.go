@@ -65,9 +65,10 @@ func (this *User) AddUser(context *gin.Context) goft.Model {
 	goft.Error(err)
 
 	thisMq := lib.NewMQ()
-	thisMq.SetConfirm()                                                                //开启confirm模式
-	thisMq.NotifyReturn()                                                              //消息确认模式
-	err = thisMq.SendMessage(lib.EXCHANGE_USER, lib.ROUTER_KEY_PARTNER, string(model)) //入队
+	thisMq.SetConfirm()   //开启confirm模式
+	thisMq.NotifyReturn() //消息确认模式
+	//err = thisMq.SendMessage(lib.EXCHANGE_USER, lib.ROUTER_KEY_PARTNER, string(model)) //入队
+	err = thisMq.SendDelayMessage(lib.EXCHANGE_USER_DELAY, lib.ROUTER_KEY_PARTNER, string(model), 5000) //入队
 	goft.Error(err)
 	thisMq.ListenConfirm()
 	return userModel

@@ -7,10 +7,11 @@ import (
 )
 
 const (
-	QUEUE_USER         = "user"
-	QUEUE_USER_PARTNER = "user_partner"
-	EXCHANGE_USER      = "userExchange"
-	ROUTER_KEY_PARTNER = "partner"
+	QUEUE_USER          = "user"
+	QUEUE_USER_PARTNER  = "user_partner"
+	EXCHANGE_USER       = "userExchange"
+	EXCHANGE_USER_DELAY = "userDelayExchange"
+	ROUTER_KEY_PARTNER  = "partner"
 )
 
 type MQ struct {
@@ -45,6 +46,17 @@ func (this *MQ) DceQueueAadBind(queues []string, key string, exchange string) er
 func (this *MQ) SendMessage(exchange string, key string, message string) error {
 	err := this.Channel.Publish(exchange, key, true, false,
 		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		})
+	return err
+}
+
+//发送延时消息
+func (this *MQ) SendDelayMessage(exchange string, key string, message string, ttl int) error {
+	err := this.Channel.Publish(exchange, key, true, false,
+		amqp.Publishing{
+			Headers:     map[string]interface{}{"x-delay": ttl},
 			ContentType: "text/plain",
 			Body:        []byte(message),
 		})
@@ -87,7 +99,7 @@ func (this *MQ) NotifyReturn() { //消息回执模式
 
 func (this *MQ) listenReturn() {
 	result := <-this.notifyReturn
-	if len(result.Body) == 0 {
+	if string(result.Body) != "" {
 		log.Println("消息入队成功")
 	} else {
 		log.Println("消息入队失败", string(result.Body))
