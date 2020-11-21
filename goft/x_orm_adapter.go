@@ -12,7 +12,7 @@ type XOrmAdapter struct {
 
 func NewXOrmAdapter() *XOrmAdapter {
 	engine, err := xorm.NewEngine("mysql",
-		"root:root@tcp(localhost:3306	)/test?charset=utf8mb4&parseTime=True&loc=Local")
+		"root:root@tcp(192.168.87.128:3306)/test?charset=utf8mb4&parseTime=True&loc=Local")
 	if err != nil {
 		log.Fatal(err)
 	}

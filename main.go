@@ -4,6 +4,7 @@ import (
 	. "wserver/classes"
 	. "wserver/goft"
 	. "wserver/middlewares"
+	"wserver/remittance/a"
 )
 
 func main() {
@@ -14,6 +15,7 @@ func main() {
 		Attach(NewUserMiddle()).                   //带生命周期的中间件
 		Mount("v1", NewUser()).
 		Mount("v3", NewBook()).
+		Mount("va", a.NewA()).
 		/*Task("0/5 * * * * *", func() {
 			log.Println("定时任务启动")
 		}).*/

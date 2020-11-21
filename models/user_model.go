@@ -14,5 +14,5 @@ func NewUserModel() *UserModel {
 }
 
 func (this UserModel) String() string {
-	return fmt.Sprint("userid:%d, username:%s", this.ID, this.UserName)
+	return fmt.Sprintf("userid:%d, username:%s", this.ID, this.UserName)
 }

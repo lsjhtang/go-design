@@ -18,6 +18,7 @@ func SendMail(msgs <-chan amqp.Delivery) {
 func send(msg amqp.Delivery) {
 	time.Sleep(time.Second * 1)
 	fmt.Println(msg.DeliveryTag, string(msg.Body))
+	//msg.Reject(false) //丢弃消息
 	msg.Ack(false)
 }
 
